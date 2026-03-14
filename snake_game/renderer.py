@@ -37,7 +37,8 @@ class TerminalRenderer:
 
         head = state.snake[0]
         board[head.y][head.x] = self._config.render.head_cell
-        board[state.food.y][state.food.x] = self._config.render.food_cell
+        for food in state.foods:
+            board[food.y][food.x] = self._config.render.food_cell
 
         border = (
             self._config.render.corner
@@ -45,7 +46,7 @@ class TerminalRenderer:
             + self._config.render.corner
         )
 
-        print("Snake Terminal - Mode Classique (V3)")
+        print("Snake Terminal - Mode Classique (V4)")
         print(f"Score: {state.score}")
         print(controls_text)
         print(border)

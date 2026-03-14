@@ -54,6 +54,6 @@ class GameState:
     snake: list[Position]
     direction: Direction
     pending_direction: Direction
-    food: Position
+    foods: set[Position]
     score: int = 0
     status: GameStatus = GameStatus.RUNNING

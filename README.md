@@ -1,10 +1,10 @@
-# Snake Terminal (Python) - V3
+# Snake Terminal (Python) - V4
 
 Projet Python public orienté **offline first** : un Snake jouable directement dans le terminal, sans interface graphique et avec un rendu ASCII simple basé sur `print`.
 
 ## Objectif
 
-Cette V3 ajoute la gestion de plusieurs vitesses de jeu tout en conservant une base propre, modulaire et maintenable pour les futures evolutions.
+Cette V4 ajoute la gestion de plusieurs fruits simultanes tout en conservant une base propre, modulaire et maintenable pour les futures evolutions.
 
 ## Prerequis
 
@@ -30,22 +30,25 @@ python3 -m snake_game
 - Deplacement : `ZQSD` ou `WASD` ou fleches
 - Retour menu pendant une partie : `X`
 
-## Fonctionnalites V3
+## Fonctionnalites V4
 
 - Ecran/menu d'accueil :
-  - commencer une partie (mode Classique),
+  - commencer une partie en mode Classique (1 fruit),
+  - commencer une partie en mode MultiFruit,
   - choisir la taille de map avant le lancement,
   - choisir la vitesse avant le lancement,
   - afficher les evolutions a venir,
   - quitter.
-- Mode jouable unique : **Classique**.
+- Deux modes jouables :
+  - **Classique** : 1 fruit simultane
+  - **MultiFruit** : plusieurs fruits simultanes
 - Cinq tailles de map disponibles :
   - Tres-petite (12x8)
   - Petite (16x10)
   - Moyenne (20x12)
   - Grande (28x16)
   - Tres grande (36x20)
-- Une seule nourriture simultanee.
+- Nombre de fruits configurable proprement via les presets de mode de jeu.
 - Trois vitesses disponibles :
   - Lent
   - Normal
@@ -100,5 +103,4 @@ python3 -m unittest discover -s tests -v
 
 ## Roadmap (versions suivantes)
 
-- V4 : plusieurs fruits simultanes
 - V5 : modes de jeu additionnels

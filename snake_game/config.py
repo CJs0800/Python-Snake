@@ -30,6 +30,15 @@ class SpeedConfig:
 
 
 @dataclass(frozen=True, slots=True)
+class GameModeConfig:
+    """Named game mode preset."""
+
+    key: str
+    label: str
+    fruit_count: int
+
+
+@dataclass(frozen=True, slots=True)
 class RenderConfig:
     """ASCII symbols used to draw the game board in the terminal."""
 
@@ -47,6 +56,7 @@ class GameplayConfig:
     """Gameplay defaults for the current version."""
 
     initial_length: int = 3
+    fruit_count: int = 1
 
 
 def _default_map_sizes() -> tuple[MapSizeConfig, ...]:
@@ -61,6 +71,12 @@ def _default_speeds() -> tuple[SpeedConfig, ...]:
     return SPEED_PRESETS
 
 
+def _default_game_modes() -> tuple[GameModeConfig, ...]:
+    """Provide default game mode presets for application configuration."""
+
+    return GAME_MODE_PRESETS
+
+
 @dataclass(frozen=True, slots=True)
 class AppConfig:
     """Aggregate application configuration."""
@@ -70,13 +86,20 @@ class AppConfig:
     gameplay: GameplayConfig = field(default_factory=GameplayConfig)
     map_sizes: tuple[MapSizeConfig, ...] = field(default_factory=_default_map_sizes, repr=False)
     speed_presets: tuple[SpeedConfig, ...] = field(default_factory=_default_speeds, repr=False)
+    game_modes: tuple[GameModeConfig, ...] = field(default_factory=_default_game_modes, repr=False)
     default_map_size_key: str = "moyenne"
     default_speed_key: str = "normal"
+    default_mode_key: str = "classique"
 
     def with_board(self, board: BoardConfig) -> "AppConfig":
         """Return a copy configured for a specific board size."""
 
         return replace(self, board=board)
+
+    def with_gameplay(self, gameplay: GameplayConfig) -> "AppConfig":
+        """Return a copy configured with updated gameplay settings."""
+
+        return replace(self, gameplay=gameplay)
 
 
 MAP_SIZE_PRESETS: tuple[MapSizeConfig, ...] = (
@@ -133,9 +156,28 @@ SPEED_BY_KEY: dict[str, SpeedConfig] = {
     speed.key: speed for speed in SPEED_PRESETS
 }
 
+GAME_MODE_PRESETS: tuple[GameModeConfig, ...] = (
+    GameModeConfig(
+        key="classique",
+        label="Classique",
+        fruit_count=1,
+    ),
+    GameModeConfig(
+        key="multifruit",
+        label="MultiFruit",
+        fruit_count=3,
+    ),
+)
+
+GAME_MODE_BY_KEY: dict[str, GameModeConfig] = {
+    mode.key: mode for mode in GAME_MODE_PRESETS
+}
+
 
 DEFAULT_CONFIG = AppConfig(
     board=MAP_SIZE_BY_KEY["moyenne"].board,
     map_sizes=MAP_SIZE_PRESETS,
     speed_presets=SPEED_PRESETS,
+    game_modes=GAME_MODE_PRESETS,
+    default_mode_key="classique",
 )

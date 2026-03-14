@@ -36,15 +36,19 @@ class GameEngine:
         head_x = width // 2
 
         snake = [Position(head_x - offset, center_y) for offset in range(initial_length)]
-        food = self._food_spawner(set(snake), width, height)
-        if food is None:
-            raise ValueError("Unable to place initial food on the board.")
+        foods = self._spawn_initial_foods(
+            occupied=set(snake),
+            width=width,
+            height=height,
+        )
+        if foods is None:
+            raise ValueError("Unable to place initial foods on the board.")
 
         return GameState(
             snake=snake,
             direction=Direction.RIGHT,
             pending_direction=Direction.RIGHT,
-            food=food,
+            foods=foods,
         )
 
     def change_direction(self, state: GameState, requested: Direction) -> None:
@@ -64,7 +68,7 @@ class GameEngine:
             state.direction = state.pending_direction
 
         new_head = state.snake[0].moved(state.direction)
-        ate_food = new_head == state.food
+        ate_food = new_head in state.foods
 
         body_to_check = state.snake if ate_food else state.snake[:-1]
         if not self._is_inside_board(new_head) or new_head in body_to_check:
@@ -75,17 +79,76 @@ class GameEngine:
 
         if ate_food:
             state.score += 1
-            next_food = self._food_spawner(
-                set(state.snake),
-                self.config.board.width,
-                self.config.board.height,
-            )
-            if next_food is None:
+            state.foods.remove(new_head)
+            if not self._refill_foods(state):
                 state.status = GameStatus.GAME_OVER
                 return
-            state.food = next_food
         else:
             state.snake.pop()
+
+    def _target_fruit_count(self) -> int:
+        """Return the configured target number of simultaneous fruits."""
+
+        return max(1, self.config.gameplay.fruit_count)
+
+    def _spawn_initial_foods(
+        self,
+        occupied: set[Position],
+        width: int,
+        height: int,
+    ) -> set[Position] | None:
+        """Spawn the initial batch of fruits for a new game."""
+
+        foods: set[Position] = set()
+        max_attempts = max(width * height * 2, 1)
+        attempts = 0
+
+        while len(foods) < self._target_fruit_count():
+            if attempts >= max_attempts:
+                return None
+
+            candidate = self._food_spawner(occupied | foods, width, height)
+            attempts += 1
+
+            if candidate is None:
+                return None
+            if not self._is_valid_food_position(candidate, occupied, foods, width, height):
+                continue
+
+            foods.add(candidate)
+
+        return foods
+
+    def _refill_foods(self, state: GameState) -> bool:
+        """Generate fruits until reaching the configured simultaneous target."""
+
+        width = self.config.board.width
+        height = self.config.board.height
+        occupied = set(state.snake)
+        max_attempts = max(width * height * 2, 1)
+        attempts = 0
+
+        while len(state.foods) < self._target_fruit_count():
+            if attempts >= max_attempts:
+                return False
+
+            candidate = self._food_spawner(occupied | state.foods, width, height)
+            attempts += 1
+
+            if candidate is None:
+                return False
+            if not self._is_valid_food_position(
+                candidate,
+                occupied,
+                state.foods,
+                width,
+                height,
+            ):
+                continue
+
+            state.foods.add(candidate)
+
+        return True
 
     def _is_inside_board(self, position: Position) -> bool:
         """Return True when a coordinate is inside map boundaries."""
@@ -112,3 +175,17 @@ class GameEngine:
         if not free_cells:
             return None
         return self._rng.choice(free_cells)
+
+    def _is_valid_food_position(
+        self,
+        candidate: Position,
+        snake_occupied: set[Position],
+        existing_foods: set[Position],
+        width: int,
+        height: int,
+    ) -> bool:
+        """Return True when a generated fruit position can be safely used."""
+
+        if candidate in snake_occupied or candidate in existing_foods:
+            return False
+        return 0 <= candidate.x < width and 0 <= candidate.y < height

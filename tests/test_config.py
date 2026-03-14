@@ -4,6 +4,8 @@ import unittest
 
 from snake_game.config import (
     DEFAULT_CONFIG,
+    GAME_MODE_BY_KEY,
+    GAME_MODE_PRESETS,
     MAP_SIZE_BY_KEY,
     MAP_SIZE_PRESETS,
     SPEED_BY_KEY,
@@ -35,7 +37,20 @@ class ConfigPresetTests(unittest.TestCase):
 
         self.assertIn(DEFAULT_CONFIG.default_map_size_key, MAP_SIZE_BY_KEY)
         self.assertIn(DEFAULT_CONFIG.default_speed_key, SPEED_BY_KEY)
+        self.assertIn(DEFAULT_CONFIG.default_mode_key, GAME_MODE_BY_KEY)
         self.assertGreaterEqual(len(MAP_SIZE_PRESETS), 5)
+
+    def test_default_fruit_count_supports_multi_fruit(self) -> None:
+        """Default gameplay should enable multiple simultaneous fruits."""
+
+        self.assertEqual(DEFAULT_CONFIG.gameplay.fruit_count, 1)
+
+    def test_game_modes_have_expected_fruit_counts(self) -> None:
+        """Classique and MultiFruit modes should expose expected fruit counts."""
+
+        self.assertEqual(len(GAME_MODE_PRESETS), 2)
+        self.assertEqual(GAME_MODE_BY_KEY["classique"].fruit_count, 1)
+        self.assertGreaterEqual(GAME_MODE_BY_KEY["multifruit"].fruit_count, 2)
 
 
 if __name__ == "__main__":

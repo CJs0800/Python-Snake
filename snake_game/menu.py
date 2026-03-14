@@ -11,20 +11,20 @@ def show_main_menu() -> str:
         clear_screen()
         print("=== Snake Terminal ===")
         print("1. Commencer une partie (Mode Classique)")
-        print("2. Modes et evolutions a venir")
-        print("3. Quitter")
+        print("2. Commencer une partie (Mode MultiFruit)")
+        print("3. Modes et evolutions a venir")
+        print("4. Quitter")
         choice = input("Votre choix: ").strip()
-        if choice in {"1", "2", "3"}:
+        if choice in {"1", "2", "3", "4"}:
             return choice
         input("Choix invalide. Appuyez sur Entree pour recommencer...")
 
 
 def show_coming_soon_screen() -> None:
-    """Display V4+ features planned for future versions."""
+    """Display V5+ features planned for future versions."""
 
     clear_screen()
     print("=== A venir ===")
-    print("- Plusieurs fruits simultanes")
     print("- Modes de jeu supplementaires")
     input("\nAppuyez sur Entree pour revenir au menu...")
 
@@ -32,6 +32,7 @@ def show_coming_soon_screen() -> None:
 def show_map_size_menu(
     map_sizes: tuple[MapSizeConfig, ...],
     default_key: str,
+    mode_label: str = "Classique",
 ) -> MapSizeConfig | None:
     """Display map size options and return the selected preset."""
 
@@ -47,7 +48,7 @@ def show_map_size_menu(
 
     while True:
         clear_screen()
-        print("=== Choix de la map (Mode Classique) ===")
+        print(f"=== Choix de la map (Mode {mode_label}) ===")
         for index, map_size in enumerate(map_sizes, start=1):
             suffix = " (par defaut)" if str(index) == default_index else ""
             print(
@@ -67,6 +68,7 @@ def show_map_size_menu(
 def show_speed_menu(
     speed_presets: tuple[SpeedConfig, ...],
     default_key: str,
+    mode_label: str = "Classique",
 ) -> SpeedConfig | None:
     """Display speed options and return the selected preset."""
 
@@ -82,7 +84,7 @@ def show_speed_menu(
 
     while True:
         clear_screen()
-        print("=== Choix de la vitesse (Mode Classique) ===")
+        print(f"=== Choix de la vitesse (Mode {mode_label}) ===")
         for index, speed in enumerate(speed_presets, start=1):
             suffix = " (par defaut)" if str(index) == default_index else ""
             print(f"{index}. {speed.label} ({speed.tick_seconds:.2f}s / tick){suffix}")

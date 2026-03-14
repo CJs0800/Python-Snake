@@ -1,10 +1,11 @@
-"""Application orchestration for terminal Snake V3."""
+"""Application orchestration for terminal Snake V4."""
 
 from __future__ import annotations
 
 import time
+from dataclasses import replace
 
-from .config import AppConfig, BoardConfig, DEFAULT_CONFIG, SpeedConfig
+from .config import AppConfig, BoardConfig, DEFAULT_CONFIG, GameModeConfig, SpeedConfig
 from .input_handler import KeyboardReader
 from .logic import GameEngine
 from .menu import (
@@ -40,6 +41,11 @@ class SnakeApp:
         """Initialize app dependencies for one process execution."""
 
         self._config = config
+        self._game_modes_by_key = {mode.key: mode for mode in self._config.game_modes}
+        self._main_menu_mode_by_choice: dict[str, str] = {
+            "1": "classique",
+            "2": "multifruit",
+        }
 
     def run(self) -> None:
         """Run the application main loop until the user quits."""
@@ -47,8 +53,12 @@ class SnakeApp:
         while True:
             choice = show_main_menu()
 
-            if choice == "1":
-                classic_options = self._select_classic_options()
+            if choice in self._main_menu_mode_by_choice:
+                selected_mode = self._resolve_selected_mode(choice)
+                if selected_mode is None:
+                    continue
+
+                classic_options = self._select_classic_options(selected_mode)
                 if classic_options is None:
                     continue
 
@@ -57,26 +67,39 @@ class SnakeApp:
                     board,
                     map_label,
                     speed,
+                    selected_mode,
                 )
                 if should_quit:
                     show_goodbye()
                     return
                 continue
 
-            if choice == "2":
+            if choice == "3":
                 show_coming_soon_screen()
                 continue
 
             show_goodbye()
             return
 
-    def _select_classic_options(self) -> tuple[BoardConfig, str, SpeedConfig] | None:
+    def _resolve_selected_mode(self, menu_choice: str) -> GameModeConfig | None:
+        """Return game mode associated with a main menu choice."""
+
+        mode_key = self._main_menu_mode_by_choice.get(menu_choice)
+        if mode_key is None:
+            return None
+        return self._game_modes_by_key.get(mode_key)
+
+    def _select_classic_options(
+        self,
+        mode: GameModeConfig,
+    ) -> tuple[BoardConfig, str, SpeedConfig] | None:
         """Collect map and speed choices before starting a classic session."""
 
         while True:
             selected_map_size = show_map_size_menu(
                 self._config.map_sizes,
                 self._config.default_map_size_key,
+                mode.label,
             )
             if selected_map_size is None:
                 return None
@@ -84,6 +107,7 @@ class SnakeApp:
             selected_speed = show_speed_menu(
                 self._config.speed_presets,
                 self._config.default_speed_key,
+                mode.label,
             )
             if selected_speed is None:
                 continue
@@ -95,10 +119,15 @@ class SnakeApp:
         board: BoardConfig,
         map_label: str,
         speed: SpeedConfig,
+        mode: GameModeConfig,
     ) -> bool:
         """Run one classic game session and return True when app should exit."""
 
-        session_config = self._config.with_board(board)
+        mode_gameplay = replace(
+            self._config.gameplay,
+            fruit_count=mode.fruit_count,
+        )
+        session_config = self._config.with_board(board).with_gameplay(mode_gameplay)
         engine = GameEngine(session_config)
         renderer = TerminalRenderer(session_config)
         pacer = FramePacer(speed.tick_seconds)
@@ -106,7 +135,8 @@ class SnakeApp:
         controls_text = (
             f"Map: {map_label} ({board.width}x{board.height}) | "
             f"Vitesse: {speed.label} ({speed.tick_seconds:.2f}s/tick) | "
-            "Mode: Classique | "
+            f"Fruits: {session_config.gameplay.fruit_count} | "
+            f"Mode: {mode.label} | "
             "Controles: ZQSD/WASD/Fleches. X: retour menu"
         )
 

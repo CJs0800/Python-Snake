@@ -36,7 +36,7 @@ class GameEngineTests(unittest.TestCase):
 
         self.config = AppConfig(
             board=BoardConfig(width=10, height=8),
-            gameplay=GameplayConfig(initial_length=3),
+            gameplay=GameplayConfig(initial_length=3, fruit_count=3),
             render=RenderConfig(),
         )
         self.engine = GameEngine(self.config, food_spawner=first_available_food)
@@ -50,13 +50,13 @@ class GameEngineTests(unittest.TestCase):
         self.assertLess(position.y, board.height)
 
     def test_new_game_state_is_valid_for_each_map_size(self) -> None:
-        """Initial snake and fruit placement should be valid for every map preset."""
+        """Initial snake and fruits placement should be valid for every map preset."""
 
         for map_size in MAP_SIZE_PRESETS:
             with self.subTest(map_size=map_size.key):
                 config = AppConfig(
                     board=map_size.board,
-                    gameplay=GameplayConfig(initial_length=3),
+                    gameplay=GameplayConfig(initial_length=3, fruit_count=3),
                     render=RenderConfig(),
                 )
                 engine = GameEngine(config, food_spawner=first_available_food)
@@ -67,8 +67,10 @@ class GameEngineTests(unittest.TestCase):
                 for segment in state.snake:
                     self._assert_position_in_bounds(segment, map_size.board)
 
-                self._assert_position_in_bounds(state.food, map_size.board)
-                self.assertNotIn(state.food, state.snake)
+                self.assertEqual(len(state.foods), config.gameplay.fruit_count)
+                for food in state.foods:
+                    self._assert_position_in_bounds(food, map_size.board)
+                    self.assertNotIn(food, state.snake)
 
     def test_snake_moves_forward_when_no_input_change(self) -> None:
         """Snake head should move one cell to the right on each step initially."""
@@ -91,18 +93,24 @@ class GameEngineTests(unittest.TestCase):
 
         self.assertEqual(state.direction, Direction.RIGHT)
 
-    def test_snake_grows_and_scores_when_eating_food(self) -> None:
-        """Eating one food should increase snake length and score."""
+    def test_snake_grows_scores_and_refills_when_eating_fruit(self) -> None:
+        """Eating one fruit should increase snake length, score and refill fruits."""
 
         state = self.engine.new_game_state()
         length_before = len(state.snake)
-        state.food = Position(state.snake[0].x + 1, state.snake[0].y)
+        state.foods = {
+            Position(state.snake[0].x + 1, state.snake[0].y),
+            Position(0, 0),
+            Position(0, 1),
+        }
 
         self.engine.step(state)
 
         self.assertEqual(len(state.snake), length_before + 1)
         self.assertEqual(state.score, 1)
         self.assertEqual(state.status, GameStatus.RUNNING)
+        self.assertEqual(len(state.foods), self.config.gameplay.fruit_count)
+        self.assertNotIn(state.snake[0], state.foods)
 
     def test_collision_with_wall_ends_game(self) -> None:
         """Crossing board boundaries should end the game."""
@@ -111,6 +119,7 @@ class GameEngineTests(unittest.TestCase):
         state.snake = [Position(9, 4), Position(8, 4), Position(7, 4)]
         state.direction = Direction.RIGHT
         state.pending_direction = Direction.RIGHT
+        state.foods = {Position(0, 0), Position(0, 1), Position(0, 2)}
 
         self.engine.step(state)
 
@@ -130,11 +139,27 @@ class GameEngineTests(unittest.TestCase):
         ]
         state.direction = Direction.LEFT
         state.pending_direction = Direction.LEFT
-        state.food = Position(0, 0)
+        state.foods = {Position(0, 0), Position(0, 1), Position(0, 2)}
 
         self.engine.step(state)
 
         self.assertEqual(state.status, GameStatus.GAME_OVER)
+
+    def test_fruits_stay_unique_after_multiple_consumptions(self) -> None:
+        """Fruit collection should remain unique after repeated consumptions."""
+
+        state = self.engine.new_game_state()
+
+        for _ in range(3):
+            state.foods = {
+                Position(state.snake[0].x + 1, state.snake[0].y),
+                Position(0, 0),
+                Position(0, 1),
+            }
+            self.engine.step(state)
+            self.assertEqual(len(state.foods), len(set(state.foods)))
+            for food in state.foods:
+                self.assertNotIn(food, state.snake)
 
 
 if __name__ == "__main__":
