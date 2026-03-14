@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Snake Final Edition</title>
+    <meta
+      name="description"
+      content="Snake jouable hors-ligne dans le navigateur, deployable sur GitHub Pages."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-layer"></div>
+
+    <header class="hero">
+      <p class="eyebrow">Snake - Final Version</p>
+      <h1>Snake Web Edition</h1>
+      <p class="subtitle">
+        Version finale deployable sur GitHub Pages, inspiree du style visuel du Snake Google.
+      </p>
+    </header>
+
+    <main class="layout">
+      <section class="panel setup-panel" aria-label="Configuration de partie">
+        <h2>Accueil</h2>
+        <p class="panel-intro">
+          Choisissez le mode, la taille de map et la vitesse avant de lancer la partie.
+        </p>
+
+        <div class="field">
+          <span class="field-label">Mode</span>
+          <div id="mode-options" class="option-grid"></div>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Taille de map</span>
+          <div id="map-options" class="option-grid"></div>
+        </div>
+
+        <div class="field">
+          <span class="field-label">Vitesse</span>
+          <div id="speed-options" class="option-grid"></div>
+        </div>
+
+        <button id="start-btn" class="primary-btn" type="button">Lancer la partie</button>
+
+        <div class="legend-block">
+          <h3>Controles</h3>
+          <p>Fleches, ZQSD ou WASD pour diriger le snake.</p>
+          <p>`P` pour pause/reprendre, `R` pour relancer.</p>
+        </div>
+
+        <div class="legend-block muted">
+          <h3>A venir</h3>
+          <p>Nouveaux modes de jeu et options avancees.</p>
+        </div>
+      </section>
+
+      <section class="panel game-panel" aria-label="Plateau de jeu">
+        <div class="hud">
+          <div class="chip-row">
+            <span id="mode-chip" class="chip">Mode: -</span>
+            <span id="map-chip" class="chip">Map: -</span>
+            <span id="speed-chip" class="chip">Vitesse: -</span>
+            <span id="fruit-chip" class="chip">Fruits: -</span>
+          </div>
+          <div class="score-box">Score <strong id="score-value">0</strong></div>
+        </div>
+
+        <div id="board-wrapper" class="board-wrapper">
+          <canvas id="game-canvas" aria-label="Jeu Snake"></canvas>
+          <div id="overlay" class="overlay hidden" aria-live="polite">
+            <h3 id="overlay-title">Pret ?</h3>
+            <p id="overlay-message">Cliquez sur "Lancer la partie" pour commencer.</p>
+            <div class="overlay-actions">
+              <button id="overlay-restart-btn" class="primary-btn" type="button">Rejouer</button>
+              <button id="overlay-menu-btn" class="ghost-btn" type="button">Configurer</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="pause-btn" class="ghost-btn" type="button">Pause</button>
+          <button id="restart-btn" class="ghost-btn" type="button">Relancer</button>
+          <button id="menu-btn" class="ghost-btn" type="button">Accueil</button>
+        </div>
+
+        <div class="touch-controls" aria-label="Controles tactiles">
+          <button class="touch-btn up" data-dir="up" type="button">▲</button>
+          <button class="touch-btn left" data-dir="left" type="button">◀</button>
+          <button class="touch-btn down" data-dir="down" type="button">▼</button>
+          <button class="touch-btn right" data-dir="right" type="button">▶</button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>

@@ -1,106 +1,77 @@
-# Snake Terminal (Python) - V4
+# Snake Web Edition - Final Version
 
-Projet Python public orienté **offline first** : un Snake jouable directement dans le terminal, sans interface graphique et avec un rendu ASCII simple basé sur `print`.
+Version finale du projet Snake : une **IHM web offline-first** deployable sur **GitHub Pages**, inspiree visuellement du Snake de Google.
 
-## Objectif
+## Pourquoi JavaScript
 
-Cette V4 ajoute la gestion de plusieurs fruits simultanes tout en conservant une base propre, modulaire et maintenable pour les futures evolutions.
+GitHub Pages sert des fichiers statiques (HTML/CSS/JS). Une app Python interactive cote serveur n'est donc pas adaptee sans couche supplementaire.
 
-## Prerequis
+Pour cette version finale, le jeu est implemente en **JavaScript** (client-side), sans dependance externe.
 
-- Python **3.11+**
-- Terminal local (macOS, Linux, Windows)
+## Fonctionnalites finales
 
-## Lancer le jeu
+- Ecran d'accueil avec configuration avant lancement.
+- Deux modes jouables :
+  - `Classique` (1 fruit simultane)
+  - `MultiFruit` (plusieurs fruits simultanes)
+- Tailles de map : Tres-petite, Petite, Moyenne, Grande, Tres grande.
+- Vitesses : Lent, Normal, Rapide.
+- Score en temps reel.
+- Gestion de pause / reprise / relance.
+- Controles clavier + boutons tactiles.
+- Rendu canvas avec style inspire du Snake Google.
+- Deploiement direct sur GitHub Pages via dossier `docs/`.
 
-Depuis la racine du projet :
+## Lancer en local
+
+Option simple :
 
 ```bash
-python3 main.py
+python3 -m http.server 8000 --directory docs
 ```
 
-Alternative :
+Puis ouvrir :
 
-```bash
-python3 -m snake_game
-```
+- [http://localhost:8000](http://localhost:8000)
+
+## Deploiement GitHub Pages
+
+1. Pousser ce repo sur GitHub.
+2. Aller dans `Settings` > `Pages`.
+3. Choisir :
+   - `Source`: `Deploy from a branch`
+   - `Branch`: `main`
+   - `Folder`: `/docs`
+4. Sauvegarder.
+
+Le site sera publie automatiquement.
 
 ## Controles
 
-- Deplacement : `ZQSD` ou `WASD` ou fleches
-- Retour menu pendant une partie : `X`
-
-## Fonctionnalites V4
-
-- Ecran/menu d'accueil :
-  - commencer une partie en mode Classique (1 fruit),
-  - commencer une partie en mode MultiFruit,
-  - choisir la taille de map avant le lancement,
-  - choisir la vitesse avant le lancement,
-  - afficher les evolutions a venir,
-  - quitter.
-- Deux modes jouables :
-  - **Classique** : 1 fruit simultane
-  - **MultiFruit** : plusieurs fruits simultanes
-- Cinq tailles de map disponibles :
-  - Tres-petite (12x8)
-  - Petite (16x10)
-  - Moyenne (20x12)
-  - Grande (28x16)
-  - Tres grande (36x20)
-- Nombre de fruits configurable proprement via les presets de mode de jeu.
-- Trois vitesses disponibles :
-  - Lent
-  - Normal
-  - Rapide
-- Le snake avance, mange, grandit et la partie se termine sur collision.
-- Rendu terminal ASCII avec bordures visibles.
-- Score affiche en continu.
-- Fin de partie propre avec retour menu ou sortie.
-- Recap au lancement de partie : map, vitesse, mode et controles.
+- Deplacement : Fleches, `ZQSD` ou `WASD`
+- Pause/Reprise : `P`
+- Relancer : `R`
 
 ## Architecture
 
 ```text
 .
-├── main.py
-├── pyproject.toml
-├── README.md
-├── snake_game
-│   ├── __init__.py
-│   ├── __main__.py
-│   ├── app.py
-│   ├── config.py
-│   ├── input_handler.py
-│   ├── logic.py
-│   ├── menu.py
-│   ├── models.py
-│   ├── renderer.py
-│   └── timing.py
-└── tests
-    ├── test_config.py
-    └── test_logic.py
+├── docs
+│   ├── .nojekyll
+│   ├── index.html
+│   ├── styles.css
+│   └── js
+│       ├── app.js
+│       ├── config.js
+│       ├── engine.js
+│       └── renderer.js
+├── snake_game           # version terminal legacy (historique)
+├── tests                # tests de la version terminale legacy
+├── main.py              # point d'entree terminal legacy
+└── pyproject.toml
 ```
 
-Separation des responsabilites :
+## Notes
 
-- `models.py` : structures de donnees (etat, position, directions)
-- `logic.py` : regles metier (deplacement, collisions, nourriture)
-- `renderer.py` : rendu terminal (frames ASCII)
-- `input_handler.py` : lecture clavier non bloquante
-- `menu.py` : ecrans de navigation
-- `app.py` : orchestration application (menu + boucle de jeu)
-- `config.py` : constantes/configuration centralisee, y compris les presets de map et de vitesse
-- `timing.py` : cadence de boucle de jeu (frame pacing)
-
-## Tests
-
-Tests unitaires simples sur la logique metier et la configuration :
-
-```bash
-python3 -m unittest discover -s tests -v
-```
-
-## Roadmap (versions suivantes)
-
-- V5 : modes de jeu additionnels
+- La version web est la **version finale de reference**.
+- Le code Python terminal est conserve comme historique/compatibilite.

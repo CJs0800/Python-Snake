@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "snake-terminal"
-version = "0.4.0"
-description = "Jeu Snake jouable hors-ligne dans le terminal."
+name = "snake-web-final"
+version = "1.0.0"
+description = "Jeu Snake web hors-ligne deployable sur GitHub Pages."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
