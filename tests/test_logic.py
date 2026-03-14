@@ -2,7 +2,13 @@
 
 import unittest
 
-from snake_game.config import AppConfig, BoardConfig, GameplayConfig, RenderConfig
+from snake_game.config import (
+    MAP_SIZE_PRESETS,
+    AppConfig,
+    BoardConfig,
+    GameplayConfig,
+    RenderConfig,
+)
 from snake_game.logic import GameEngine
 from snake_game.models import Direction, GameStatus, Position
 
@@ -34,6 +40,35 @@ class GameEngineTests(unittest.TestCase):
             render=RenderConfig(),
         )
         self.engine = GameEngine(self.config, food_spawner=first_available_food)
+
+    def _assert_position_in_bounds(self, position: Position, board: BoardConfig) -> None:
+        """Check that a position is inside board boundaries."""
+
+        self.assertGreaterEqual(position.x, 0)
+        self.assertLess(position.x, board.width)
+        self.assertGreaterEqual(position.y, 0)
+        self.assertLess(position.y, board.height)
+
+    def test_new_game_state_is_valid_for_each_map_size(self) -> None:
+        """Initial snake and fruit placement should be valid for every map preset."""
+
+        for map_size in MAP_SIZE_PRESETS:
+            with self.subTest(map_size=map_size.key):
+                config = AppConfig(
+                    board=map_size.board,
+                    gameplay=GameplayConfig(tick_seconds=0.1, initial_length=3),
+                    render=RenderConfig(),
+                )
+                engine = GameEngine(config, food_spawner=first_available_food)
+                state = engine.new_game_state()
+
+                self.assertEqual(len(state.snake), config.gameplay.initial_length)
+                self.assertEqual(len(set(state.snake)), len(state.snake))
+                for segment in state.snake:
+                    self._assert_position_in_bounds(segment, map_size.board)
+
+                self._assert_position_in_bounds(state.food, map_size.board)
+                self.assertNotIn(state.food, state.snake)
 
     def test_snake_moves_forward_when_no_input_change(self) -> None:
         """Snake head should move one cell to the right on each step initially."""

@@ -1,5 +1,6 @@
 """Menu screens for the terminal Snake application."""
 
+from .config import MapSizeConfig
 from .renderer import clear_screen
 
 
@@ -19,15 +20,49 @@ def show_main_menu() -> str:
 
 
 def show_coming_soon_screen() -> None:
-    """Display V2+ features planned for future versions."""
+    """Display V3+ features planned for future versions."""
 
     clear_screen()
     print("=== A venir ===")
-    print("- Choix de la taille de map")
     print("- Choix de la vitesse")
     print("- Plusieurs fruits simultanes")
     print("- Modes de jeu supplementaires")
     input("\nAppuyez sur Entree pour revenir au menu...")
+
+
+def show_map_size_menu(
+    map_sizes: tuple[MapSizeConfig, ...],
+    default_key: str,
+) -> MapSizeConfig | None:
+    """Display map size options and return the selected preset."""
+
+    choices_by_index = {str(index + 1): map_size for index, map_size in enumerate(map_sizes)}
+    default_index = next(
+        (
+            str(index + 1)
+            for index, map_size in enumerate(map_sizes)
+            if map_size.key == default_key
+        ),
+        "1",
+    )
+
+    while True:
+        clear_screen()
+        print("=== Choix de la map (Mode Classique) ===")
+        for index, map_size in enumerate(map_sizes, start=1):
+            suffix = " (par defaut)" if str(index) == default_index else ""
+            print(
+                f"{index}. {map_size.label} ({map_size.board.width}x{map_size.board.height}){suffix}"
+            )
+        print("b. Retour au menu")
+
+        choice = input("Votre choix: ").strip().lower()
+        if choice == "b":
+            return None
+        if choice in choices_by_index:
+            return choices_by_index[choice]
+
+        input("Choix invalide. Appuyez sur Entree pour recommencer...")
 
 
 def show_game_over_screen(score: int) -> str:

@@ -1,16 +1,17 @@
-"""Application orchestration for terminal Snake V1."""
+"""Application orchestration for terminal Snake V2."""
 
 from __future__ import annotations
 
 import time
 
-from .config import AppConfig, DEFAULT_CONFIG
+from .config import AppConfig, BoardConfig, DEFAULT_CONFIG
 from .input_handler import KeyboardReader
 from .logic import GameEngine
 from .menu import (
     show_coming_soon_screen,
     show_game_over_screen,
     show_goodbye,
+    show_map_size_menu,
     show_main_menu,
 )
 from .models import Direction, GameStatus
@@ -37,8 +38,6 @@ class SnakeApp:
         """Initialize app dependencies for one process execution."""
 
         self._config = config
-        self._engine = GameEngine(config)
-        self._renderer = TerminalRenderer(config)
 
     def run(self) -> None:
         """Run the application main loop until the user quits."""
@@ -47,7 +46,17 @@ class SnakeApp:
             choice = show_main_menu()
 
             if choice == "1":
-                should_quit = self._run_classic_mode()
+                selected_map_size = show_map_size_menu(
+                    self._config.map_sizes,
+                    self._config.default_map_size_key,
+                )
+                if selected_map_size is None:
+                    continue
+
+                should_quit = self._run_classic_mode(
+                    selected_map_size.board,
+                    selected_map_size.label,
+                )
                 if should_quit:
                     show_goodbye()
                     return
@@ -60,13 +69,19 @@ class SnakeApp:
             show_goodbye()
             return
 
-    def _run_classic_mode(self) -> bool:
+    def _run_classic_mode(self, board: BoardConfig, map_label: str) -> bool:
         """Run one classic game session and return True when app should exit."""
 
-        state = self._engine.new_game_state()
-        controls_text = "Controles: ZQSD/WASD/Fleches. X: retour menu"
+        session_config = self._config.with_board(board)
+        engine = GameEngine(session_config)
+        renderer = TerminalRenderer(session_config)
+        state = engine.new_game_state()
+        controls_text = (
+            f"Map: {map_label} ({board.width}x{board.height}) | "
+            "Controles: ZQSD/WASD/Fleches. X: retour menu"
+        )
 
-        self._renderer.render_game(state, controls_text)
+        renderer.render_game(state, controls_text)
 
         with KeyboardReader() as keyboard:
             while state.status is GameStatus.RUNNING:
@@ -78,10 +93,10 @@ class SnakeApp:
 
                 requested_direction = KEY_TO_DIRECTION.get(pressed_key or "")
                 if requested_direction is not None:
-                    self._engine.change_direction(state, requested_direction)
+                    engine.change_direction(state, requested_direction)
 
-                self._engine.step(state)
-                self._renderer.render_game(state, controls_text)
+                engine.step(state)
+                renderer.render_game(state, controls_text)
 
                 elapsed = time.monotonic() - frame_start
                 delay = self._config.gameplay.tick_seconds - elapsed

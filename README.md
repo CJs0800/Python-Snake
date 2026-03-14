@@ -1,10 +1,10 @@
-# Snake Terminal (Python) - V1
+# Snake Terminal (Python) - V2
 
 Projet Python public orienté **offline first** : un Snake jouable directement dans le terminal, sans interface graphique et avec un rendu ASCII simple basé sur `print`.
 
 ## Objectif
 
-Cette V1 pose une base propre, modulaire et maintenable, prête pour les évolutions futures (tailles de map, vitesses, modes, plusieurs fruits).
+Cette V2 ajoute la gestion de plusieurs tailles de map tout en conservant une base propre, modulaire et maintenable pour les futures evolutions.
 
 ## Prerequis
 
@@ -30,14 +30,20 @@ python3 -m snake_game
 - Deplacement : `ZQSD` ou `WASD` ou fleches
 - Retour menu pendant une partie : `X`
 
-## Fonctionnalites V1
+## Fonctionnalites V2
 
 - Ecran/menu d'accueil :
   - commencer une partie (mode Classique),
+  - choisir la taille de map avant le lancement,
   - afficher les evolutions a venir,
   - quitter.
 - Mode jouable unique : **Classique**.
-- Une map par defaut.
+- Cinq tailles de map disponibles :
+  - Tres-petite (12x8)
+  - Petite (16x10)
+  - Moyenne (20x12)
+  - Grande (28x16)
+  - Tres grande (36x20)
 - Une seule nourriture simultanee.
 - Le snake avance, mange, grandit et la partie se termine sur collision.
 - Rendu terminal ASCII avec bordures visibles.
@@ -73,7 +79,7 @@ Separation des responsabilites :
 - `input_handler.py` : lecture clavier non bloquante
 - `menu.py` : ecrans de navigation
 - `app.py` : orchestration application (menu + boucle de jeu)
-- `config.py` : constantes/configuration centralisee
+- `config.py` : constantes/configuration centralisee, y compris les presets de tailles de map
 
 ## Tests
 
@@ -85,7 +91,6 @@ python3 -m unittest discover -s tests -v
 
 ## Roadmap (versions suivantes)
 
-- V2 : choix de taille de map
 - V3 : choix de vitesse
 - V4 : plusieurs fruits simultanes
 - V5 : modes de jeu additionnels
