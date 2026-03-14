@@ -21,6 +21,15 @@ class MapSizeConfig:
 
 
 @dataclass(frozen=True, slots=True)
+class SpeedConfig:
+    """Named speed preset for frame pacing."""
+
+    key: str
+    label: str
+    tick_seconds: float
+
+
+@dataclass(frozen=True, slots=True)
 class RenderConfig:
     """ASCII symbols used to draw the game board in the terminal."""
 
@@ -35,9 +44,8 @@ class RenderConfig:
 
 @dataclass(frozen=True, slots=True)
 class GameplayConfig:
-    """Timing and gameplay defaults for the current version."""
+    """Gameplay defaults for the current version."""
 
-    tick_seconds: float = 0.18
     initial_length: int = 3
 
 
@@ -45,6 +53,12 @@ def _default_map_sizes() -> tuple[MapSizeConfig, ...]:
     """Provide default map presets for application configuration."""
 
     return MAP_SIZE_PRESETS
+
+
+def _default_speeds() -> tuple[SpeedConfig, ...]:
+    """Provide default speed presets for application configuration."""
+
+    return SPEED_PRESETS
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,7 +69,9 @@ class AppConfig:
     render: RenderConfig = field(default_factory=RenderConfig)
     gameplay: GameplayConfig = field(default_factory=GameplayConfig)
     map_sizes: tuple[MapSizeConfig, ...] = field(default_factory=_default_map_sizes, repr=False)
+    speed_presets: tuple[SpeedConfig, ...] = field(default_factory=_default_speeds, repr=False)
     default_map_size_key: str = "moyenne"
+    default_speed_key: str = "normal"
 
     def with_board(self, board: BoardConfig) -> "AppConfig":
         """Return a copy configured for a specific board size."""
@@ -95,8 +111,31 @@ MAP_SIZE_BY_KEY: dict[str, MapSizeConfig] = {
     map_size.key: map_size for map_size in MAP_SIZE_PRESETS
 }
 
+SPEED_PRESETS: tuple[SpeedConfig, ...] = (
+    SpeedConfig(
+        key="lent",
+        label="Lent",
+        tick_seconds=0.28,
+    ),
+    SpeedConfig(
+        key="normal",
+        label="Normal",
+        tick_seconds=0.18,
+    ),
+    SpeedConfig(
+        key="rapide",
+        label="Rapide",
+        tick_seconds=0.11,
+    ),
+)
+
+SPEED_BY_KEY: dict[str, SpeedConfig] = {
+    speed.key: speed for speed in SPEED_PRESETS
+}
+
 
 DEFAULT_CONFIG = AppConfig(
     board=MAP_SIZE_BY_KEY["moyenne"].board,
     map_sizes=MAP_SIZE_PRESETS,
+    speed_presets=SPEED_PRESETS,
 )

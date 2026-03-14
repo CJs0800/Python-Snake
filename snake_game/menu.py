@@ -1,6 +1,6 @@
 """Menu screens for the terminal Snake application."""
 
-from .config import MapSizeConfig
+from .config import MapSizeConfig, SpeedConfig
 from .renderer import clear_screen
 
 
@@ -20,11 +20,10 @@ def show_main_menu() -> str:
 
 
 def show_coming_soon_screen() -> None:
-    """Display V3+ features planned for future versions."""
+    """Display V4+ features planned for future versions."""
 
     clear_screen()
     print("=== A venir ===")
-    print("- Choix de la vitesse")
     print("- Plusieurs fruits simultanes")
     print("- Modes de jeu supplementaires")
     input("\nAppuyez sur Entree pour revenir au menu...")
@@ -55,6 +54,39 @@ def show_map_size_menu(
                 f"{index}. {map_size.label} ({map_size.board.width}x{map_size.board.height}){suffix}"
             )
         print("b. Retour au menu")
+
+        choice = input("Votre choix: ").strip().lower()
+        if choice == "b":
+            return None
+        if choice in choices_by_index:
+            return choices_by_index[choice]
+
+        input("Choix invalide. Appuyez sur Entree pour recommencer...")
+
+
+def show_speed_menu(
+    speed_presets: tuple[SpeedConfig, ...],
+    default_key: str,
+) -> SpeedConfig | None:
+    """Display speed options and return the selected preset."""
+
+    choices_by_index = {str(index + 1): speed for index, speed in enumerate(speed_presets)}
+    default_index = next(
+        (
+            str(index + 1)
+            for index, speed in enumerate(speed_presets)
+            if speed.key == default_key
+        ),
+        "1",
+    )
+
+    while True:
+        clear_screen()
+        print("=== Choix de la vitesse (Mode Classique) ===")
+        for index, speed in enumerate(speed_presets, start=1):
+            suffix = " (par defaut)" if str(index) == default_index else ""
+            print(f"{index}. {speed.label} ({speed.tick_seconds:.2f}s / tick){suffix}")
+        print("b. Retour au menu map")
 
         choice = input("Votre choix: ").strip().lower()
         if choice == "b":

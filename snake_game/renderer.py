@@ -45,7 +45,7 @@ class TerminalRenderer:
             + self._config.render.corner
         )
 
-        print("Snake Terminal - Mode Classique (V2)")
+        print("Snake Terminal - Mode Classique (V3)")
         print(f"Score: {state.score}")
         print(controls_text)
         print(border)

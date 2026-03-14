@@ -36,7 +36,7 @@ class GameEngineTests(unittest.TestCase):
 
         self.config = AppConfig(
             board=BoardConfig(width=10, height=8),
-            gameplay=GameplayConfig(tick_seconds=0.1, initial_length=3),
+            gameplay=GameplayConfig(initial_length=3),
             render=RenderConfig(),
         )
         self.engine = GameEngine(self.config, food_spawner=first_available_food)
@@ -56,7 +56,7 @@ class GameEngineTests(unittest.TestCase):
             with self.subTest(map_size=map_size.key):
                 config = AppConfig(
                     board=map_size.board,
-                    gameplay=GameplayConfig(tick_seconds=0.1, initial_length=3),
+                    gameplay=GameplayConfig(initial_length=3),
                     render=RenderConfig(),
                 )
                 engine = GameEngine(config, food_spawner=first_available_food)

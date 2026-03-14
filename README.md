@@ -1,10 +1,10 @@
-# Snake Terminal (Python) - V2
+# Snake Terminal (Python) - V3
 
 Projet Python public orienté **offline first** : un Snake jouable directement dans le terminal, sans interface graphique et avec un rendu ASCII simple basé sur `print`.
 
 ## Objectif
 
-Cette V2 ajoute la gestion de plusieurs tailles de map tout en conservant une base propre, modulaire et maintenable pour les futures evolutions.
+Cette V3 ajoute la gestion de plusieurs vitesses de jeu tout en conservant une base propre, modulaire et maintenable pour les futures evolutions.
 
 ## Prerequis
 
@@ -30,11 +30,12 @@ python3 -m snake_game
 - Deplacement : `ZQSD` ou `WASD` ou fleches
 - Retour menu pendant une partie : `X`
 
-## Fonctionnalites V2
+## Fonctionnalites V3
 
 - Ecran/menu d'accueil :
   - commencer une partie (mode Classique),
   - choisir la taille de map avant le lancement,
+  - choisir la vitesse avant le lancement,
   - afficher les evolutions a venir,
   - quitter.
 - Mode jouable unique : **Classique**.
@@ -45,10 +46,15 @@ python3 -m snake_game
   - Grande (28x16)
   - Tres grande (36x20)
 - Une seule nourriture simultanee.
+- Trois vitesses disponibles :
+  - Lent
+  - Normal
+  - Rapide
 - Le snake avance, mange, grandit et la partie se termine sur collision.
 - Rendu terminal ASCII avec bordures visibles.
 - Score affiche en continu.
 - Fin de partie propre avec retour menu ou sortie.
+- Recap au lancement de partie : map, vitesse, mode et controles.
 
 ## Architecture
 
@@ -66,8 +72,10 @@ python3 -m snake_game
 │   ├── logic.py
 │   ├── menu.py
 │   ├── models.py
-│   └── renderer.py
+│   ├── renderer.py
+│   └── timing.py
 └── tests
+    ├── test_config.py
     └── test_logic.py
 ```
 
@@ -79,11 +87,12 @@ Separation des responsabilites :
 - `input_handler.py` : lecture clavier non bloquante
 - `menu.py` : ecrans de navigation
 - `app.py` : orchestration application (menu + boucle de jeu)
-- `config.py` : constantes/configuration centralisee, y compris les presets de tailles de map
+- `config.py` : constantes/configuration centralisee, y compris les presets de map et de vitesse
+- `timing.py` : cadence de boucle de jeu (frame pacing)
 
 ## Tests
 
-Tests unitaires simples sur la logique metier :
+Tests unitaires simples sur la logique metier et la configuration :
 
 ```bash
 python3 -m unittest discover -s tests -v
@@ -91,6 +100,5 @@ python3 -m unittest discover -s tests -v
 
 ## Roadmap (versions suivantes)
 
-- V3 : choix de vitesse
 - V4 : plusieurs fruits simultanes
 - V5 : modes de jeu additionnels
