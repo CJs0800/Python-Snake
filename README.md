@@ -103,16 +103,16 @@ Developed by :
 > **⮕ Démo en ligne :** https://CJs0800.github.io/Python-Snake/
 > --
 
-Ce projet a été développé en 2026 après l'obtention de ma [certification Python PCAP](https://pythoninstitute.org/pcap). 
+Ce projet a été développé en 2026 après l'obtention de ma [certification Python PCAP](https://pythoninstitute.org/pcap).  
 Ce projet est ma première grande réalisation avec l'utilisation du [Prompt Engenering](https://fr.wikipedia.org/wiki/Prompt_engineering).
 
 ### Pourquoi ce Projet
 
-Après l'obtention de ma [certification Python PCAP](https://pythoninstitute.org/pcap) j'ai souhaité tester mes compétences en dans l'utilisation des agents IA et du [Prompt Engenering](https://fr.wikipedia.org/wiki/Prompt_engineering) à travers un projet de moyenne taille. 
+Après l'obtention de ma [certification Python PCAP](https://pythoninstitute.org/pcap) j'ai souhaité tester mes compétences dans l'utilisation des agents IA et du [Prompt Engenering](https://fr.wikipedia.org/wiki/Prompt_engineering) à travers un projet de moyenne taille. 
 
 L'obtention de ma certification Python [PCAP](https://pythoninstitute.org/pcap) a été une bonne opportunité pour superviser ce projet, étant persuadé qu'il faut toujours être en capacité de **comprendre**, **valider** et **améliorer** les solutions générées par les agents IA. 
 
-Ce projet représente une bonne expérience de l'utilisation de [Spécifications Techniques Détaillées (STD)](https://www.akuiteo.com/glossaire-erp/specifications-techniques-detaillees/#:~:text=Les%20Sp%C3%A9cifications%20Techniques%20D%C3%A9taill%C3%A9es,de%20gestion%20et%20les%20actions.) décrivant et guidant les développement de la réalisation souhaitée.
+Ce projet représente une bonne expérience de l'utilisation de [Spécifications Techniques Détaillées (STD)](https://www.akuiteo.com/glossaire-erp/specifications-techniques-detaillees/#:~:text=Les%20Sp%C3%A9cifications%20Techniques%20D%C3%A9taill%C3%A9es,de%20gestion%20et%20les%20actions.) décrivant et guidant les développements de la réalisation souhaitée.
 
 ### Pourquoi JavaScript
 
